@@ -1,0 +1,32 @@
+library(ggplot2)
+library(RColorBrewer)
+display.brewer.all()
+install.packages("viridis") 
+library("viridis")        
+library("ggsci")
+donation_anonymity_gdp <- data.frame(
+  Policy = c("Ukraine", "Poland", "Russia", "Czech Republic", "Greece", "Portugal", "Spain", "France", "UK", "Belgium", "Finland"),
+  Altruism = c(12.9,58.9,18.2,48.8,28.9,76.3,30.4,100,30,86.2,88.7),
+  GDP_Per_Capita = c(2313, 10806, 11105, 14624, 16241,16605,22777, 32662,34722, 35511, 37350)
+)
+
+colnames(donation_anonymity_gdp)
+loadfonts(device = "mac")
+
+ggplot(donation_anonymity_gdp, aes(x = GDP_Per_Capita, y = Altruism, label = Policy)) +
+  geom_point(aes(color = Policy), size = 3) +
+  scale_color_manual(values = colorRampPalette(c("#cce6ff", "#004080"))(nrow(donation_anonymity_gdp))) + 
+  geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "dashed", formula = y ~ x) +
+  labs(title = "Correlation between GDP per Capita and Altruism in Egg Donation",
+       x = "GDP per Capita (EUR)",
+       y = "Motives for oocyte donation: Altruism %",
+       color = "Country") +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, size = 1)
+  )
+
+correlation <- cor(donation_anonymity_gdp$GDP_Per_Capita, donation_anonymity_gdp$Altruism, method = "pearson")
+print(correlation)
